@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan mailingów</title>
+<meta name="theme-color" content="#1b2c66">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b2c66'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23fff' stroke-width='2.5'/%3E%3Cpath d='M10 16h12' stroke='%23e0393e' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: oklch(0.29 0.11 264);
+  --navy-2: oklch(0.35 0.12 264);
+  --navy-3: oklch(0.42 0.12 264);
+  --on-navy: oklch(0.97 0.01 250);
+  --on-navy-2: oklch(0.84 0.05 255);
+  --paper: oklch(0.975 0.014 245);
+  --paper-2: oklch(0.935 0.026 248);
+  --paper-3: oklch(0.88 0.035 250);
+  --ink: oklch(0.24 0.07 264);
+  --ink-2: oklch(0.44 0.06 262);
+  --red: oklch(0.56 0.2 24);
+  --red-ink: oklch(0.5 0.19 24);
+  --green-ink: oklch(0.48 0.12 152);
+  --slate-ink: oklch(0.5 0.07 258);
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --r: 10px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100vh;
+  background: var(--navy); color: var(--ink);
+  font: 400 16px/1.5 "Archivo", system-ui, sans-serif;
+  font-variation-settings: "wdth" 100;
+  font-variant-numeric: tabular-nums;
+}
+::selection { background: var(--red); color: #fff; }
+input, textarea { caret-color: var(--red); }
+:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; border-radius: 6px; }
+* { scrollbar-color: var(--navy-3) transparent; }
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: inherit; text-underline-offset: 3px; }
+svg.i { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Pasek górny ---------- */
+.top {
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px clamp(16px, 4vw, 40px);
+  color: var(--on-navy);
+}
+.brand { display: flex; align-items: center; gap: 12px; margin: 0; font-size: 1.35rem; font-weight: 800; font-variation-settings: "wdth" 88; letter-spacing: -0.01em; }
+.brand svg { width: 38px; height: 38px; }
+.sync { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--on-navy-2); }
+.sync::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: oklch(0.78 0.15 152); }
+.sync.busy::before { background: oklch(0.85 0.14 85); }
+.sync.err::before { background: var(--red); }
+
+/* ---------- Układ ---------- */
+.layout {
+  display: grid; gap: clamp(16px, 3vw, 32px);
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: start;
+  padding: 0 clamp(16px, 4vw, 40px) 48px;
+  max-width: 1440px; margin: 0 auto;
+}
+@media (max-width: 920px) { .layout { grid-template-columns: 1fr; } }
+
+/* ---------- Najbliższa wysyłka ---------- */
+.next {
+  position: sticky; top: 20px;
+  color: var(--on-navy);
+  padding: clamp(8px, 2vw, 16px) 0 0;
+}
+@media (max-width: 920px) { .next { position: static; } }
+.next h2 { margin: 0 0 18px; font-size: 1.05rem; font-weight: 700; color: var(--on-navy-2); }
+.next-card { display: grid; grid-template-columns: auto 1fr; gap: 20px 24px; align-items: center; }
+.pm { width: clamp(118px, 13vw, 156px); aspect-ratio: 1; color: var(--on-navy); }
+.pm .pm-day { font-size: 40px; font-weight: 900; font-variation-settings: "wdth" 70; }
+.pm .pm-date { font-size: 17px; font-weight: 700; }
+.next-when { margin: 0; font-size: clamp(1.15rem, 1.8vw, 1.4rem); font-weight: 700; line-height: 1.25; }
+.next-when small { display: block; margin-top: 4px; font-size: .95rem; font-weight: 600; color: var(--on-navy-2); }
+.next-when .soon { color: oklch(0.86 0.13 85); }
+.next-subj {
+  grid-column: 1 / -1; margin: 6px 0 0;
+  font-size: clamp(2rem, 4.2vw, 3.4rem); line-height: 1.02; font-weight: 850;
+  font-variation-settings: "wdth" 78; letter-spacing: -0.02em; text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.next-subj.none { color: var(--on-navy-2); }
+.next-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.next .stamp { position: static; transform: rotate(-4deg); font-size: 1rem; }
+.next-status { grid-column: 1 / -1; }
+.rules {
+  margin: 34px 0 0; padding: 18px 0 0; border-top: 1px solid var(--navy-3);
+  font-size: .95rem; color: var(--on-navy-2); max-width: 46ch;
+}
+.rules b { color: var(--on-navy); font-weight: 700; }
+
+/* ---------- Przyciski ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px;
+  border: 0; border-radius: 999px; font-weight: 700; font-size: 1rem;
+  transition: transform .2s var(--ease), background-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.btn:active { transform: scale(.97); }
+.btn-red { background: var(--red); color: #fff; box-shadow: 0 6px 14px -6px oklch(0.12 0.06 264 / .55); }
+.btn-red:hover { background: var(--red-ink); }
+.btn-light { background: oklch(1 0 0 / .1); color: var(--on-navy); box-shadow: inset 0 0 0 1.5px oklch(1 0 0 / .28); }
+.btn-light:hover { background: oklch(1 0 0 / .18); }
+.btn-navy { background: var(--navy); color: var(--on-navy); }
+.btn-navy:hover { background: var(--navy-2); }
+.btn-ghost { background: transparent; color: var(--ink-2); }
+.btn-ghost:hover { background: var(--paper-2); color: var(--ink); }
+.btn-danger { background: transparent; color: var(--red-ink); padding: 0 12px; }
+.btn-danger:hover { background: oklch(0.95 0.03 24); }
+.btn:disabled { opacity: .55; cursor: progress; }
+
+/* ---------- Tydzień ---------- */
+.week {
+  background: var(--paper); border-radius: 18px;
+  box-shadow: 0 24px 60px -24px oklch(0.12 0.08 264 / .8);
+  overflow: hidden;
+}
+.week-nav {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 14px clamp(14px, 2.4vw, 24px); background: var(--paper-2);
+  border-bottom: 1px solid var(--paper-3);
+}
+.week-nav h2 { margin: 0 auto 0 4px; font-size: clamp(1.15rem, 2vw, 1.45rem); font-weight: 800; font-variation-settings: "wdth" 85; letter-spacing: -0.01em; }
+.week-nav h2 small { display: block; font-size: .85rem; font-weight: 600; color: var(--ink-2); letter-spacing: 0; font-variation-settings: "wdth" 100; }
+.nav-btn {
+  width: 46px; height: 46px; display: grid; place-items: center;
+  border: 0; border-radius: 50%; background: var(--paper); color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--paper-3);
+  transition: background-color .2s var(--ease), transform .2s var(--ease);
+}
+.nav-btn:hover { background: #fff; }
+.nav-btn:active { transform: scale(.94); }
+.today-btn { min-height: 46px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--navy); color: var(--on-navy); font-weight: 700; }
+.today-btn[hidden] { display: none; }
+
+.days { padding: 6px clamp(10px, 2vw, 20px) 18px; }
+.day {
+  display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 16px;
+  padding: 16px 4px; border-bottom: 1px dashed var(--paper-3);
+}
+.day:last-child { border-bottom: 0; }
+.day.extra { padding: 8px 4px; }
+.dmark {
+  width: 84px; height: 84px; border-radius: 50%;
+  display: grid; place-content: center; text-align: center; gap: 0;
+  border: 2.5px solid currentColor; outline: 1.5px solid currentColor; outline-offset: -8px;
+  color: var(--ink); line-height: 1;
+}
+.dmark b { font-size: 1.55rem; font-weight: 900; font-variation-settings: "wdth" 72; }
+.dmark span { font-size: .95rem; font-weight: 700; margin-top: 3px; }
+.day.extra .dmark { width: 58px; height: 58px; margin-left: 13px; border-width: 1.5px; outline: 0; color: var(--ink-2); }
+.day.extra .dmark b { font-size: 1.05rem; }
+.day.extra .dmark span { font-size: .78rem; }
+.day.today .dmark { background: var(--red); color: #fff; border-color: var(--red); outline-color: #fff; }
+.day.past:not(.today) .dmark { opacity: .55; }
+.dslot { display: grid; gap: 12px; align-content: center; min-width: 0; }
+
+/* Koperta */
+.env {
+  position: relative; background: #fff; border-radius: var(--r);
+  padding: 22px 20px 14px;
+  box-shadow: 0 1px 0 var(--paper-3), 0 10px 24px -14px oklch(0.25 0.08 264 / .45);
+  overflow: hidden;
+  animation: envIn .5s var(--ease) both;
+}
+.env::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 7px;
+  background: repeating-linear-gradient(-45deg, var(--red) 0 12px, #fff 12px 20px, var(--navy-2) 20px 32px, #fff 32px 40px);
+}
+@keyframes envIn { from { opacity: 0; transform: translateY(8px) scale(.985); } }
+.env-main {
+  display: block; width: 100%; padding: 0 120px 0 0; margin: 0; border: 0; background: none; text-align: left;
+}
+.env h3 { margin: 0; font-size: 1.3rem; line-height: 1.2; font-weight: 750; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.env-main:hover h3 { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; text-decoration-color: var(--paper-3); }
+.env h3 em { font-style: normal; color: var(--ink-2); font-weight: 600; }
+.note { margin: 6px 120px 0 0; color: var(--ink-2); white-space: pre-line; overflow-wrap: anywhere; }
+.note a { color: var(--navy-3); font-weight: 600; }
+.moved { display: inline-flex; align-items: center; gap: 6px; margin: 10px 0 0; padding: 4px 10px; border-radius: 999px; background: oklch(0.95 0.05 85); color: oklch(0.42 0.1 70); font-size: .88rem; font-weight: 650; }
+.moved svg.i { width: 16px; height: 16px; }
+.env-foot { display: flex; align-items: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.env-foot .edit { margin-left: auto; }
+.ico-btn {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px;
+  border: 0; border-radius: 999px; background: transparent; color: var(--ink-2); font-weight: 650; font-size: .95rem;
+}
+.ico-btn:hover { background: var(--paper-2); color: var(--ink); }
+
+/* Status – przełącznik 3 pozycji */
+.seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--paper-2); border: 0; margin: 0; }
+.seg button, .seg label {
+  position: relative; min-height: 36px; padding: 0 14px; display: inline-flex; align-items: center;
+  border: 0; border-radius: 999px; background: transparent; color: var(--ink-2);
+  font-weight: 650; font-size: .92rem; cursor: pointer;
+  transition: background-color .2s var(--ease), color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.seg button:hover, .seg label:hover { color: var(--ink); }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg [aria-pressed="true"], .seg label:has(input:checked) { background: #fff; color: var(--ink); box-shadow: 0 1px 3px oklch(0.25 0.08 264 / .25); }
+.seg [aria-pressed="true"][data-s="gotowy"], .seg label:has(input[value="gotowy"]:checked) { color: var(--green-ink); }
+.seg [aria-pressed="true"][data-s="wyslany"], .seg label:has(input[value="wyslany"]:checked) { color: var(--red-ink); }
+.seg label:has(input:focus-visible) { outline: 3px solid var(--red); outline-offset: 1px; }
+
+/* Stempel statusu */
+.stamp {
+  position: absolute; top: 22px; right: 16px;
+  display: inline-block; padding: 5px 12px;
+  border: 3px solid currentColor; border-radius: 8px; outline: 1.5px solid currentColor; outline-offset: 2px;
+  font-size: .95rem; font-weight: 900; font-variation-settings: "wdth" 68; letter-spacing: .08em; text-transform: uppercase; line-height: 1.1;
+  transform: rotate(-7deg);
+  -webkit-mask: var(--grain); mask: var(--grain);
+  pointer-events: none;
+}
+.st-plan .stamp, .stamp.st-plan { color: var(--slate-ink); }
+.st-gotowy .stamp, .stamp.st-gotowy { color: var(--green-ink); }
+.st-wyslany .stamp, .stamp.st-wyslany { color: var(--red-ink); }
+.next .stamp.st-plan { color: oklch(0.85 0.05 255); }
+.next .stamp.st-gotowy { color: oklch(0.85 0.14 150); }
+.next .stamp.st-wyslany { color: oklch(0.78 0.15 24); }
+:root { --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.05'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.st-wyslany { background: oklch(0.985 0.006 245); }
+.st-wyslany h3 { color: var(--ink-2); }
+.stamped .stamp { animation: stampIn .55s var(--ease) both; }
+@keyframes stampIn {
+  0% { opacity: 0; transform: rotate(-16deg) scale(1.9); filter: blur(3px); }
+  55% { opacity: 1; transform: rotate(-6deg) scale(.94); filter: blur(0); }
+  100% { transform: rotate(-7deg) scale(1); }
+}
+
+/* Pusty dzień wysyłki */
+.env-empty {
+  display: flex; align-items: center; gap: 14px; width: 100%; min-height: 84px; padding: 16px 20px;
+  border: 2px dashed var(--paper-3); border-radius: var(--r); background: transparent;
+  text-align: left; color: var(--ink-2); font-size: 1.05rem; font-weight: 650;
+  transition: border-color .2s var(--ease), background-color .2s var(--ease), color .2s var(--ease);
+}
+.env-empty .plus { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--navy); color: #fff; flex: none; transition: transform .25s var(--ease); }
+.env-empty:hover { border-color: var(--navy-3); background: #fff; color: var(--ink); }
+.env-empty:hover .plus { transform: rotate(90deg); }
+.env-empty small { display: block; font-size: .88rem; font-weight: 500; color: var(--ink-2); }
+.env-empty.warn { border-color: oklch(0.8 0.1 24); color: var(--red-ink); }
+.env-empty.warn .plus { background: var(--red); }
+.add-small {
+  justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px;
+  border: 0; border-radius: 999px; background: transparent; color: var(--ink-2); font-weight: 650; font-size: .95rem;
+}
+.add-small:hover { background: var(--paper-2); color: var(--ink); }
+
+/* Formularz edycji */
+form.env { padding-top: 24px; display: grid; gap: 14px; animation: none; box-shadow: 0 0 0 2px var(--navy-3), 0 16px 34px -16px oklch(0.25 0.08 264 / .6); }
+.fld { display: grid; gap: 6px; font-weight: 700; font-size: .92rem; color: var(--ink); }
+.fld input, .fld textarea {
+  width: 100%; padding: 12px 14px; border: 1.5px solid var(--paper-3); border-radius: 10px;
+  background: var(--paper); color: var(--ink); font: 500 1.05rem/1.4 "Archivo", system-ui, sans-serif;
+  transition: border-color .2s var(--ease), background-color .2s var(--ease);
+}
+.fld input::placeholder, .fld textarea::placeholder { color: oklch(0.55 0.04 260); }
+.fld input:focus, .fld textarea:focus { outline: none; border-color: var(--navy-3); background: #fff; }
+.fld textarea { resize: vertical; min-height: 84px; }
+.fld-temat input { font-size: 1.25rem; font-weight: 700; }
+.frow { display: flex; gap: 14px; flex-wrap: wrap; align-items: end; }
+.frow .fld { flex: 0 1 200px; }
+.frow .seg { margin-bottom: 4px; }
+.ffoot { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ffoot .sp { flex: 1; }
+.hint { font-size: .85rem; color: var(--ink-2); font-weight: 500; }
+
+/* Komunikaty */
+.fatal { margin: 0 clamp(16px, 4vw, 40px) 16px; padding: 14px 18px; border-radius: 12px; background: var(--red); color: #fff; font-weight: 650; }
+.fatal[hidden] { display: none; }
+.toast {
+  position: fixed; left: 50%; bottom: 22px; z-index: 10;
+  display: flex; align-items: center; gap: 14px; max-width: calc(100vw - 32px);
+  padding: 10px 10px 10px 18px; border-radius: 14px;
+  background: var(--ink); color: #fff; font-weight: 600;
+  box-shadow: 0 14px 34px -10px oklch(0.1 0.06 264 / .6);
+  transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+  transition: transform .35s var(--ease), opacity .25s var(--ease);
+}
+.toast.on { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+.toast.err { background: var(--red-ink); }
+.toast button { min-height: 38px; padding: 0 14px; border: 0; border-radius: 10px; background: oklch(1 0 0 / .14); color: #fff; font-weight: 700; }
+.toast button:hover { background: oklch(1 0 0 / .24); }
+.toast button[hidden] { display: none; }
+.loading { padding: 40px 20px; text-align: center; color: var(--ink-2); }
+
+@media (max-width: 560px) {
+  .day { grid-template-columns: 64px minmax(0, 1fr); gap: 10px; }
+  .dmark { width: 62px; height: 62px; outline-offset: -6px; }
+  .dmark b { font-size: 1.15rem; }
+  .dmark span { font-size: .8rem; }
+  .day.extra .dmark { width: 48px; height: 48px; margin-left: 7px; }
+  .day.extra .dmark b { font-size: .9rem; }
+  .day.extra .dmark span { font-size: .7rem; }
+  .env { padding: 20px 14px 12px; }
+  .env-main { padding-right: 0; }
+  .note { margin-right: 0; }
+  .stamp { position: static; display: inline-block; margin: 0 0 10px; transform: rotate(-4deg); font-size: .82rem; }
+  .env h3 { font-size: 1.15rem; }
+  .env-foot .edit span { display: none; }
+  .seg button, .seg label { padding: 0 10px; font-size: .88rem; }
+  .env-empty { min-height: 64px; padding: 12px 14px; font-size: 1rem; }
+  .env-empty .plus { width: 38px; height: 38px; }
+  .brand { font-size: 1.15rem; }
+  .brand svg { width: 32px; height: 32px; }
+  .sync span { display: none; }
+  .next-card { gap: 14px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+<!--
+THESIS: Każdy mailing to koperta lotnicza ze stemplem daty; dashboard odmawia generycznej tabeli/kalendarza z kafelkami.
+OWN-WORLD: Głęboki granat pocztowy jako tło całej strony, białe koperty z paskiem lotniczym czerwono-granatowym, okrągłe stemple dni, gumowe pieczątki statusu (PLAN szaroniebieski, GOTOWY zielony, WYSŁANY czerwony), Archivo w wąskich, ciężkich odmianach.
+STORY: Pracownik widzi od razu, co i kiedy idzie najbliżej, w tygodniu widzi pon/śr/pt jako stałe miejsca na koperty, dodaje lub zmienia wpis jednym kliknięciem, przenosi datę gdy trzeba.
+FIRST VIEWPORT: Lewo – duży stempel i temat najbliższej wysyłki na granacie z akcją „Oznacz jako wysłany”; prawo – arkusz tygodnia z 7 dniami, pon/śr/pt duże miejsca na koperty.
+FORM: Koperty i stemple, pozycja 3 z listy; seed 580e93c7.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+-->
+<header class="top">
+  <h1 class="brand">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="20" cy="20" r="12.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M9 20h22" stroke="#e0393e" stroke-width="3.2" stroke-linecap="round"/></svg>
+    Plan mailingów
+  </h1>
+  <div class="sync busy" id="sync" role="status"><span>Łączę…</span></div>
+</header>
+<p class="fatal" id="fatal" hidden></p>
+
+<main class="layout">
+  <section class="next" id="next" aria-labelledby="nextH">
+    <h2 id="nextH">Najbliższa wysyłka</h2>
+    <div id="nextBody"><p class="loading" style="color:var(--on-navy-2)">Wczytuję…</p></div>
+    <p class="rules">Wysyłamy zwykle w <b>poniedziałek, środę i piątek</b>. Gdy trzeba inaczej, otwórz mailing i zmień mu datę – zostanie oznaczony jako przeniesiony. Wszyscy widzą ten sam plan, zmiany pojawiają się u innych w kilka sekund.</p>
+  </section>
+
+  <section class="week" aria-labelledby="weekH">
+    <div class="week-nav">
+      <button class="nav-btn" id="prev" aria-label="Poprzedni tydzień"><svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <h2 id="weekH">—</h2>
+      <button class="today-btn" id="thisWeek" hidden>Ten tydzień</button>
+      <button class="nav-btn" id="nextW" aria-label="Następny tydzień"><svg class="i" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+    <div class="days" id="days"><p class="loading">Wczytuję plan…</p></div>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toastTxt"></span><button id="toastBtn" hidden></button></div>
+
+<script src="config.js"></script>
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const DNI = ["poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota", "niedziela"];
+const DNI_NA = ["poniedziałek", "wtorek", "środę", "czwartek", "piątek", "sobotę", "niedzielę"];
+const DNI_Z = ["poniedziałku", "wtorku", "środy", "czwartku", "piątku", "soboty", "niedzieli"];
+const KR = ["PON", "WT", "ŚR", "CZW", "PT", "SOB", "ND"];
+const MIES = ["stycznia", "lutego", "marca", "kwietnia", "maja", "czerwca", "lipca", "sierpnia", "września", "października", "listopada", "grudnia"];
+const STD = [0, 2, 4]; // poniedziałek, środa, piątek
+const STATUS = { plan: "Plan", gotowy: "Gotowy", wyslany: "Wysłany" };
+
+/* ---------- Daty (ISO yyyy-mm-dd, bez stref czasowych) ---------- */
+const toD = s => new Date(s + "T00:00:00Z");
+const toS = d => d.toISOString().slice(0, 10);
+const addDays = (s, n) => { const d = toD(s); d.setUTCDate(d.getUTCDate() + n); return toS(d); };
+const dow = s => (toD(s).getUTCDay() + 6) % 7;
+const monday = s => addDays(s, -dow(s));
+const dm = s => { const d = toD(s); return d.getUTCDate() + "." + String(d.getUTCMonth() + 1).padStart(2, "0"); };
+const longDate = s => { const d = toD(s); return d.getUTCDate() + " " + MIES[d.getUTCMonth()]; };
+const diffDays = (a, b) => Math.round((toD(b) - toD(a)) / 864e5);
+function localToday() { const n = new Date(); return toS(new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()))); }
+function relDay(s) {
+  const n = diffDays(S.dzis, s);
+  if (n === 0) return "dziś";
+  if (n === 1) return "jutro";
+  if (n === -1) return "wczoraj";
+  return n > 0 ? "za " + n + " dni" : n * -1 + " dni temu";
+}
+
+/* ---------- Pomocnicze ---------- */
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const linkify = s => esc(s).replace(/\bhttps?:\/\/[^\s<]+[^\s<.,;:!?)\]'"]/g, u => `<a href="${u}" target="_blank" rel="noopener">${u.length > 48 ? u.slice(0, 45) + "…" : u}</a>`);
+const I = {
+  plus: '<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  edit: '<svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg>',
+  move: '<svg class="i" viewBox="0 0 24 24"><path d="M4 12h14M13 6l6 6-6 6"/></svg>',
+  send: '<svg class="i" viewBox="0 0 24 24"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4z"/></svg>',
+  trash: '<svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
+};
+
+/* ---------- Stan ---------- */
+const S = { dzis: localToday(), wpisy: [], nastepny: null };
+let week = monday(S.dzis);
+let editing = null;      // id edytowanego mailingu albo "new:<data>"
+let pending = 0;         // trwające zapisy – w tym czasie nie nadpisujemy widoku
+let loadedOnce = false, followToday = true;
+const stampedIds = new Set();
+
+/* ---------- API ---------- */
+async function rpc(fn, args = {}) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, { method: "POST", headers: { apikey: SUPABASE_KEY, "Content-Type": "application/json" }, body: JSON.stringify(args) });
+  const t = await r.text();
+  if (!r.ok) { let m; try { m = JSON.parse(t).message } catch (e) {} throw new Error(m || "Błąd serwera " + r.status); }
+  return t ? JSON.parse(t) : null;
+}
+function setSync(state, txt) { const el = $("#sync"); el.className = "sync " + state; el.querySelector("span").textContent = txt; }
+const setSaved = () => setSync("", "Zapisane · " + new Date().toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" }));
+
+// Odświeżanie co kilka sekund: zmiany innych pracowników pojawiają się prawie od razu.
+const POLL_MS = 5000;
+let loading = false;
+async function load(force) {
+  if (loading || (!force && (pending || editing))) return;
+  loading = true;
+  try {
+    const st = await rpc("mail_lista", { p_od: week, p_do: addDays(week, 6) });
+    if (pending || (editing && !force)) return;
+    const prevToday = S.dzis;
+    S.dzis = st.dzis; S.wpisy = st.wpisy; S.nastepny = st.nastepny;
+    if (!loadedOnce || (followToday && prevToday !== S.dzis && monday(S.dzis) !== week)) {
+      loadedOnce = true;
+      if (followToday && monday(S.dzis) !== week) { week = monday(S.dzis); loading = false; return load(true); }
+    }
+    $("#fatal").hidden = true;
+    setSync("", "Na bieżąco");
+    render();
+  } catch (e) {
+    setSync("err", "Brak połączenia");
+    if (!loadedOnce) {
+      const f = $("#fatal"); f.hidden = false;
+      f.textContent = /mail_lista|function/i.test(e.message) ? "Baza nie jest jeszcze przygotowana (uruchom supabase.sql w Supabase)." : "Nie udało się połączyć z bazą: " + e.message + ". Spróbuję ponownie za chwilę.";
+      $("#days").innerHTML = ""; $("#nextBody").innerHTML = "";
+    }
+  } finally { loading = false; }
+}
+
+/* ---------- Widok ---------- */
+function render() { renderNext(); renderWeek(); }
+
+function postmark(s) {
+  const d = dow(s);
+  return `<svg class="pm" viewBox="0 0 160 160" aria-hidden="true">
+    <circle cx="80" cy="80" r="74" fill="none" stroke="currentColor" stroke-width="5"/>
+    <circle cx="80" cy="80" r="62" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M28 80h104" stroke="#e0393e" stroke-width="3" opacity=".9"/>
+    <text class="pm-day" x="80" y="68" text-anchor="middle" fill="currentColor">${KR[d]}</text>
+    <text class="pm-date" x="80" y="108" text-anchor="middle" fill="currentColor">${dm(s)}.${toD(s).getUTCFullYear()}</text>
+  </svg>`;
+}
+
+function renderNext() {
+  const n = S.nastepny, el = $("#nextBody");
+  if (!n) {
+    let d = S.dzis; while (!STD.includes(dow(d))) d = addDays(d, 1);
+    el.innerHTML = `<div class="next-card">
+      ${postmark(d)}
+      <p class="next-when">${DNI[dow(d)][0].toUpperCase() + DNI[dow(d)].slice(1)}, ${longDate(d)}<small>${relDay(d)}</small></p>
+      <p class="next-subj none">Nic nie czeka na wysyłkę</p>
+      <div class="next-actions"><button class="btn btn-red" data-add="${d}" data-jump="${d}">${I.plus} Zaplanuj mailing na ${DNI_NA[dow(d)]}</button></div>
+    </div>`;
+    return;
+  }
+  const rd = relDay(n.dzien), soon = diffDays(S.dzis, n.dzien) <= 1;
+  el.innerHTML = `<div class="next-card">
+    ${postmark(n.dzien)}
+    <p class="next-when">${DNI[dow(n.dzien)][0].toUpperCase() + DNI[dow(n.dzien)].slice(1)}, ${longDate(n.dzien)}<small class="${soon ? "soon" : ""}">${rd}</small></p>
+    <p class="next-subj">${n.temat ? esc(n.temat) : "Temat jeszcze nieustalony"}</p>
+    <div class="next-status"><span class="stamp st-${n.status}">${STATUS[n.status]}</span></div>
+    <div class="next-actions">
+      <button class="btn btn-red" data-status="wyslany" data-id="${n.id}">${I.send} Oznacz jako wysłany</button>
+      <button class="btn btn-light" data-edit="${n.id}" data-jump="${n.dzien}">${I.edit} Otwórz</button>
+    </div>
+  </div>`;
+}
+
+function weekTitle() {
+  const a = toD(week), b = toD(addDays(week, 6));
+  const y = b.getUTCFullYear();
+  if (a.getUTCMonth() === b.getUTCMonth()) return `${a.getUTCDate()}–${b.getUTCDate()} ${MIES[b.getUTCMonth()]} ${y}`;
+  return `${a.getUTCDate()} ${MIES[a.getUTCMonth()]} – ${b.getUTCDate()} ${MIES[b.getUTCMonth()]} ${y}`;
+}
+function weekLabel() {
+  const n = diffDays(monday(S.dzis), week) / 7;
+  return n === 0 ? "Ten tydzień" : n === 1 ? "Następny tydzień" : n === -1 ? "Poprzedni tydzień" : n > 0 ? "Za " + n + " tyg." : (n * -1) + " tyg. temu";
+}
+
+function renderWeek() {
+  $("#weekH").innerHTML = `${weekTitle()}<small>${weekLabel()}</small>`;
+  $("#thisWeek").hidden = week === monday(S.dzis);
+  let h = "";
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(week, i), std = STD.includes(i);
+    const list = S.wpisy.filter(w => w.dzien === d);
+    const isToday = d === S.dzis, past = d < S.dzis;
+    const adding = editing === "new:" + d;
+    const big = std || list.length || adding;
+    let slot = list.map(w => editing === w.id ? formHTML(w) : envHTML(w)).join("");
+    if (adding) slot += formHTML(null, d);
+    else if (!list.length && std) {
+      const warn = past || isToday;
+      slot += `<button class="env-empty ${warn ? "warn" : ""}" data-add="${d}"><span class="plus">${I.plus}</span><span>${warn ? "Brak mailingu" : "Dodaj mailing"}<small>${past ? "W ten dzień nic nie zaplanowano" : "Kliknij, żeby wpisać temat na " + DNI_NA[i]}</small></span></button>`;
+    } else slot += `<button class="add-small" data-add="${d}">${I.plus} ${list.length ? "Dodaj kolejny" : "Dodaj mailing"}</button>`;
+    h += `<div class="day ${big ? "std" : "extra"} ${isToday ? "today" : ""} ${past ? "past" : ""}" aria-label="${DNI[i]} ${longDate(d)}">
+      <div class="dmark"><b>${KR[i]}</b><span>${dm(d)}</span></div>
+      <div class="dslot">${slot}</div>
+    </div>`;
+  }
+  $("#days").innerHTML = h;
+  stampedIds.clear();
+  const f = document.querySelector("form.env [name=temat]");
+  if (f && !f.dataset.focused) { f.dataset.focused = 1; f.focus(); }
+}
+
+function segButtons(w) {
+  return `<div class="seg" role="group" aria-label="Status">${Object.entries(STATUS).map(([k, v]) =>
+    `<button type="button" data-s="${k}" data-status="${k}" data-id="${w.id}" aria-pressed="${w.status === k}">${v}</button>`).join("")}</div>`;
+}
+
+function envHTML(w) {
+  return `<article class="env st-${w.status} ${stampedIds.has(w.id) ? "stamped" : ""}">
+    <button class="env-main" data-edit="${w.id}" aria-label="Edytuj: ${esc(w.temat || "bez tematu")}"><h3>${w.temat ? esc(w.temat) : "<em>Bez tematu</em>"}</h3></button>
+    ${w.notatka ? `<p class="note">${linkify(w.notatka)}</p>` : ""}
+    ${w.przeniesiono_z ? `<p class="moved">${I.move} Przeniesione z ${DNI_Z[dow(w.przeniesiono_z)]} ${dm(w.przeniesiono_z)}</p>` : ""}
+    <span class="stamp">${STATUS[w.status]}</span>
+    <div class="env-foot">
+      ${segButtons(w)}
+      <button class="ico-btn edit" data-edit="${w.id}">${I.edit}<span>Edytuj</span></button>
+    </div>
+  </article>`;
+}
+
+function formHTML(w, d) {
+  const isNew = !w;
+  w = w || { id: "", dzien: d, temat: "", status: "plan", notatka: "" };
+  return `<form class="env" data-form="${isNew ? "new" : w.id}" autocomplete="off">
+    <label class="fld fld-temat">Temat maila<input name="temat" maxlength="300" value="${esc(w.temat)}" placeholder="np. Nowości tygodnia" required></label>
+    <div class="frow">
+      <label class="fld">Dzień wysyłki<input type="date" name="dzien" value="${w.dzien}" required></label>
+      <fieldset class="seg" aria-label="Status">${Object.entries(STATUS).map(([k, v]) =>
+        `<label><input type="radio" name="status" value="${k}" ${w.status === k ? "checked" : ""}>${v}</label>`).join("")}</fieldset>
+    </div>
+    <label class="fld">Notatka / link<textarea name="notatka" rows="3" maxlength="4000" placeholder="Co w treści, do kogo, link do szablonu…">${esc(w.notatka)}</textarea></label>
+    <div class="ffoot">
+      ${isNew ? "" : `<button type="button" class="btn btn-danger" data-del="${w.id}">${I.trash} Usuń</button>`}
+      <span class="sp"></span>
+      <button type="button" class="btn btn-ghost" data-cancel>Anuluj</button>
+      <button type="submit" class="btn btn-navy">Zapisz</button>
+    </div>
+  </form>`;
+}
+
+/* ---------- Komunikat ---------- */
+let toastT;
+function toast(txt, btn, err) {
+  const t = $("#toast"), b = $("#toastBtn");
+  $("#toastTxt").textContent = txt;
+  t.classList.toggle("err", !!err);
+  b.hidden = !btn; b.onclick = null;
+  if (btn) { b.textContent = btn.label; b.onclick = () => { t.classList.remove("on"); btn.fn(); }; }
+  t.classList.add("on");
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), btn ? 7000 : 3200);
+}
+
+/* ---------- Akcje ---------- */
+async function write(fn, args) {
+  pending++; setSync("busy", "Zapisuję…");
+  try { const r = await rpc(fn, args); setSaved(); return r; }
+  catch (e) { setSync("err", "Nie zapisano"); throw e; }
+  finally { pending--; }
+}
+
+function goWeek(d) { week = monday(d); followToday = week === monday(S.dzis); }
+
+async function setStatus(id, s) {
+  const w = S.wpisy.find(x => x.id === id) || (S.nastepny && S.nastepny.id === id ? S.nastepny : null);
+  if (!w || w.status === s) return;
+  const old = w.status; w.status = s;
+  if (s === "wyslany") stampedIds.add(id);
+  render();
+  try { await write("mail_status", { p_id: id, p_status: s }); }
+  catch (e) { w.status = old; render(); toast("Nie zmieniono statusu: " + e.message, null, true); }
+  load(true);
+}
+
+async function save(form) {
+  const fd = new FormData(form), idRaw = form.dataset.form;
+  const args = { p_id: idRaw === "new" ? null : +idRaw, p_dzien: fd.get("dzien"), p_temat: fd.get("temat").trim(), p_status: fd.get("status") || "plan", p_notatka: fd.get("notatka").trim() };
+  if (!args.p_dzien) { toast("Wybierz dzień wysyłki.", null, true); return; }
+  form.querySelectorAll("button").forEach(b => b.disabled = true);
+  try {
+    const r = await write("mail_zapisz", args);
+    editing = null;
+    if (monday(r.dzien) !== week) toast(`Zapisano na ${DNI_NA[dow(r.dzien)]} ${dm(r.dzien)}.`, { label: "Pokaż", fn: () => { goWeek(r.dzien); load(true); } });
+    else toast(idRaw === "new" ? "Dodano mailing." : "Zapisano zmiany.");
+    await load(true);
+  } catch (e) {
+    form.querySelectorAll("button").forEach(b => b.disabled = false);
+    toast("Nie zapisano: " + e.message, null, true);
+  }
+}
+
+async function del(id) {
+  const w = S.wpisy.find(x => x.id === id);
+  try {
+    await write("mail_usun", { p_id: id });
+    editing = null; await load(true);
+    toast(`Usunięto „${w && w.temat ? w.temat : "mailing"}”.`, { label: "Cofnij", fn: async () => { try { await write("mail_przywroc", { p_id: id }); await load(true); toast("Przywrócono."); } catch (e) { toast("Nie przywrócono: " + e.message, null, true); } } });
+  } catch (e) { toast("Nie usunięto: " + e.message, null, true); }
+}
+
+function open(target, jump) {
+  if (jump && monday(jump) !== week) { goWeek(jump); editing = target; load(true); return; }
+  editing = target; render();
+}
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("button");
+  if (!t) return;
+  if (t.dataset.status && t.dataset.id) return setStatus(+t.dataset.id, t.dataset.status);
+  if (t.dataset.add) return open("new:" + t.dataset.add, t.dataset.jump);
+  if (t.dataset.edit) return open(+t.dataset.edit, t.dataset.jump);
+  if (t.dataset.del) return del(+t.dataset.del);
+  if (t.hasAttribute("data-cancel")) { editing = null; render(); load(); }
+});
+document.addEventListener("submit", e => { if (e.target.matches("form.env")) { e.preventDefault(); save(e.target); } });
+document.addEventListener("keydown", e => {
+  const f = e.target.closest && e.target.closest("form.env");
+  if (!f) return;
+  if (e.key === "Escape") { editing = null; render(); load(); }
+  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); f.requestSubmit(); }
+});
+$("#prev").onclick = () => { goWeek(addDays(week, -7)); editing = null; load(true); };
+$("#nextW").onclick = () => { goWeek(addDays(week, 7)); editing = null; load(true); };
+$("#thisWeek").onclick = () => { goWeek(S.dzis); editing = null; load(true); };
+
+load(true);
+setInterval(load, POLL_MS);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+</script>
+</body>
+</html>
