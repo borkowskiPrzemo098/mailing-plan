@@ -169,7 +169,7 @@ svg.i { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor;
 .env {
   position: relative; background: #fff; border-radius: var(--r);
   padding: 22px 20px 14px;
-  box-shadow: 0 1px 0 var(--paper-3), 0 10px 24px -14px oklch(0.25 0.08 264 / .45);
+  box-shadow: 0 1px 0 var(--paper-3), 0 10px 24px -14px oklch(0.2 0.01 264 / .3);
   overflow: hidden;
   animation: envIn .5s var(--ease) both;
 }
@@ -206,7 +206,7 @@ svg.i { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor;
 }
 .seg button:hover, .seg label:hover { color: var(--ink); }
 .seg input { position: absolute; opacity: 0; pointer-events: none; }
-.seg [aria-pressed="true"], .seg label:has(input:checked) { background: #fff; color: var(--ink); box-shadow: 0 1px 3px oklch(0.25 0.08 264 / .25); }
+.seg [aria-pressed="true"], .seg label:has(input:checked) { background: #fff; color: var(--ink); box-shadow: 0 1px 3px oklch(0.2 0.01 264 / .2); }
 .seg [aria-pressed="true"][data-s="gotowy"], .seg label:has(input[value="gotowy"]:checked) { color: var(--green-ink); }
 .seg [aria-pressed="true"][data-s="wyslany"], .seg label:has(input[value="wyslany"]:checked) { color: var(--red-ink); }
 .seg label:has(input:focus-visible) { outline: 3px solid var(--red); outline-offset: 1px; }
@@ -257,7 +257,7 @@ svg.i { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor;
 .add-small:hover { background: var(--paper-2); color: var(--ink); }
 
 /* Formularz edycji */
-form.env { padding-top: 24px; display: grid; gap: 14px; animation: none; box-shadow: 0 0 0 2px var(--navy-3), 0 16px 34px -16px oklch(0.25 0.08 264 / .6); }
+form.env { padding-top: 24px; display: grid; gap: 14px; animation: none; box-shadow: 0 0 0 2px var(--navy-3), 0 16px 34px -16px oklch(0.2 0.01 264 / .35); }
 .fld { display: grid; gap: 6px; font-weight: 700; font-size: .92rem; color: var(--ink); }
 .fld input, .fld textarea {
   width: 100%; padding: 12px 14px; border: 1.5px solid var(--paper-3); border-radius: 10px;
@@ -283,7 +283,7 @@ form.env { padding-top: 24px; display: grid; gap: 14px; animation: none; box-sha
   display: flex; align-items: center; gap: 14px; max-width: calc(100vw - 32px);
   padding: 10px 10px 10px 18px; border-radius: 14px;
   background: var(--ink); color: #fff; font-weight: 600;
-  box-shadow: 0 14px 34px -10px oklch(0.1 0.06 264 / .6);
+  box-shadow: 0 14px 34px -10px oklch(0.1 0.01 264 / .5);
   transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
   transition: transform .35s var(--ease), opacity .25s var(--ease);
 }
