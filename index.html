@@ -122,7 +122,7 @@ svg.i { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor;
 /* ---------- Tydzień ---------- */
 .week {
   background: var(--paper); border-radius: 18px;
-  box-shadow: 0 24px 60px -24px oklch(0.12 0.08 264 / .8);
+  box-shadow: 0 24px 60px -24px oklch(0.08 0.01 264 / .7);
   overflow: hidden;
 }
 .week-nav {
@@ -420,7 +420,7 @@ const setSaved = () => setSync("", "Zapisane · " + new Date().toLocaleTimeStrin
 
 // Odświeżanie co kilka sekund: zmiany innych pracowników pojawiają się prawie od razu.
 const POLL_MS = 5000;
-let loading = false;
+let loading = false, lastSig = "";
 async function load(force) {
   if (loading || (!force && (pending || editing))) return;
   loading = true;
@@ -435,7 +435,9 @@ async function load(force) {
     }
     $("#fatal").hidden = true;
     setSync("", "Na bieżąco");
-    render();
+    // Bez zmian w danych nie przebudowujemy widoku – inaczej co 5 s ginąłby fokus i najechanie.
+    const sig = JSON.stringify([week, st]);
+    if (force || sig !== lastSig) { lastSig = sig; render(); }
   } catch (e) {
     setSync("err", "Brak połączenia");
     if (!loadedOnce) {
